@@ -70,9 +70,10 @@ class TicketCounter extends Booking {
             bookedPassengers.remove(cancelTicketPassenger);
             _moveRacToBookedPassenger();
         } else if (cancelTicketPassenger.allotedBerth.equals("RAC")) {
-            availableRAC++;
             racList.remove(passengerID);
             racListPositions.add(cancelTicketPassenger.seatNumber);
+            availableRAC++;
+            _moveWaitingListToRac();
         } else if (cancelTicketPassenger.allotedBerth.equals("WL")) {
             availableWaiting++;
             waitingList.remove(passengerID);
@@ -95,7 +96,9 @@ class TicketCounter extends Booking {
         if (availableWaiting < 1) {
             PassengerBO wlPassenger = passengers.get(waitingList.poll());
             waitingListPositions.add(wlPassenger.seatNumber);
+            availableWaiting++;
             bookInRACList(wlPassenger, racListPositions.get(0), "RAC");
+
         }
     }
 
