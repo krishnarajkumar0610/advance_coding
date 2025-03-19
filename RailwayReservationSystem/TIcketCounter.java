@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-class TicketCounter extends Booking {
+class TicketCounter extends RailwayBookingServices {
     static int availableUpperBerth = 1;
     static int availableLowerBerth = 1;
     static int availableMiddleBerth = 1;
@@ -12,16 +12,16 @@ class TicketCounter extends Booking {
     static int availableRAC = 1;
     static Queue<Integer> waitingList = new LinkedList<>();
     static Queue<Integer> racList = new LinkedList<>();
-    static ArrayList<PassengerBO> bookedPassengers = new ArrayList<>();
+    static ArrayList<RailwayPassengerBO> bookedPassengers = new ArrayList<>();
     static ArrayList<Integer> waitingListPositions = new ArrayList<>(Arrays.asList(1));
     static ArrayList<Integer> racListPositions = new ArrayList<>(Arrays.asList(1));
     static ArrayList<Integer> upperBerthPositions = new ArrayList<>(Arrays.asList(1));
     static ArrayList<Integer> lowerBerthPositions = new ArrayList<>(Arrays.asList(1));
     static ArrayList<Integer> middleBerthPositions = new ArrayList<>(Arrays.asList(1));
-    static HashMap<Integer, PassengerBO> passengers = new HashMap<>();
+    static HashMap<Integer, RailwayPassengerBO> passengers = new HashMap<>();
 
     @Override
-    void book(PassengerBO passenger, int berthPosition, String givenBerth) {
+    void book(RailwayPassengerBO passenger, int berthPosition, String givenBerth) {
         passenger.seatNumber = berthPosition;
         passenger.allotedBerth = givenBerth;
         passengers.put(passenger.passengerID, passenger);
@@ -31,7 +31,7 @@ class TicketCounter extends Booking {
     }
 
     @Override
-    void bookInWaitingList(PassengerBO passenger, int berthPosition, String givenBerth) {
+    void bookInWaitingList(RailwayPassengerBO passenger, int berthPosition, String givenBerth) {
         passenger.seatNumber = berthPosition;
         passenger.allotedBerth = givenBerth;
         passengers.put(passenger.passengerID, passenger);
@@ -41,7 +41,7 @@ class TicketCounter extends Booking {
     }
 
     @Override
-    void bookInRACList(PassengerBO passenger, int berthPosition, String givenBerth) {
+    void bookInRACList(RailwayPassengerBO passenger, int berthPosition, String givenBerth) {
         passenger.seatNumber = berthPosition;
         passenger.allotedBerth = givenBerth;
         passengers.put(passenger.passengerID, passenger);
@@ -52,7 +52,7 @@ class TicketCounter extends Booking {
 
     @Override
     void cancel(int passengerID) {
-        PassengerBO cancelTicketPassenger = passengers.get(passengerID);
+        RailwayPassengerBO cancelTicketPassenger = passengers.get(passengerID);
         if (cancelTicketPassenger.allotedBerth.equals("U")) {
             availableUpperBerth++;
             upperBerthPositions.add(cancelTicketPassenger.seatNumber);
@@ -84,17 +84,17 @@ class TicketCounter extends Booking {
 
     void _moveRacToBookedPassenger() {
         if (availableRAC < 1) {
-            PassengerBO racPassenger = passengers.get(racList.poll());
+            RailwayPassengerBO racPassenger = passengers.get(racList.poll());
             racListPositions.add(racPassenger.seatNumber);
             availableRAC++;
-            Main.bookTicket(racPassenger);
+            RailwayMain.bookTicket(racPassenger);
             _moveWaitingListToRac();
         }
     }
 
     void _moveWaitingListToRac() {
         if (availableWaiting < 1) {
-            PassengerBO wlPassenger = passengers.get(waitingList.poll());
+            RailwayPassengerBO wlPassenger = passengers.get(waitingList.poll());
             waitingListPositions.add(wlPassenger.seatNumber);
             availableWaiting++;
             bookInRACList(wlPassenger, racListPositions.get(0), "RAC");
@@ -120,7 +120,7 @@ class TicketCounter extends Booking {
             return;
         }
 
-        for (PassengerBO passengerBO : bookedPassengers) {
+        for (RailwayPassengerBO passengerBO : bookedPassengers) {
             System.out.println("Passenger ID:" + passengerBO.passengerID);
             System.out.println("Passenger Name:" + passengerBO.passengerName);
             System.out.println("Passenger Age:" + passengerBO.passengerAge);
